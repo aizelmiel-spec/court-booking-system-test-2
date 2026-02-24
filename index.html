@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boost Basketball | Professional Court Booking</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- 0. HERO / ROLE SELECTION -->
+    <div id="role-view" class="hero-view">
+        <div class="container hero-content fade-in">
+            <h1 class="hero-logo">BOOST <span>BASKETBALL</span></h1>
+            <p style="font-size: 1.25rem; opacity: 0.8;">Premium hardwood facilities for elite performance.</p>
+
+            <div class="role-select-cards">
+                <div class="role-item" onclick="selectRole('user')">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🏀</div>
+                    <h2>Book a Court</h2>
+                    <p style="margin-top: 1rem; opacity: 0.6;">Choose your sport, pick your time, and hit the court.</p>
+                </div>
+                <div class="role-item" onclick="selectRole('admin-login')">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🛡️</div>
+                    <h2>Admin Portal</h2>
+                    <p style="margin-top: 1rem; opacity: 0.6;">Manage facility availability and view reservations.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. ADMIN LOGIN -->
+    <div id="auth-view" class="view-section"
+        style="display: none; align-items: center; justify-content: center; background: #f8fafc;">
+        <div class="glass-card fade-in" style="width: 100%; max-width: 480px;">
+            <button class="btn btn-outline" style="margin-bottom: 2rem;" onclick="showView('role-view')">← Back</button>
+            <h2>Facility Access</h2>
+            <p style="margin-bottom: 2.5rem; opacity: 0.7;">Enter admin credentials to manage schedules.</p>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" class="form-input" placeholder="admin" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">Authorize
+                    Access</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- STEP 1: SPORT SELECTION -->
+    <div id="sport-select-view" class="view-section" style="display: none;">
+        <header class="header">
+            <div class="container">
+                <h1 class="logo">BOOST <span>BASKETBALL</span></h1>
+                <button class="btn btn-outline" onclick="showView('role-view')">← Back to Home</button>
+            </div>
+        </header>
+
+        <main class="container fade-in">
+            <div class="page-header">
+                <div class="progress-bar">
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+                <h2>The Hardwood Awaits</h2>
+                <p>Select your court category to begin your booking.</p>
+            </div>
+
+            <div class="grid-cards">
+                <div class="select-card" onclick="selectSportStep('Whole Basketball')">
+                    <div class="image"
+                        style="background-image: url('https://images.unsplash.com/photo-1544919996-cc6e5a6ef695?q=80&w=1000&auto=format&fit=crop');">
+                    </div>
+                    <div class="content">
+                        <h3>Whole Basketball</h3>
+                        <p>Full 94ft professional hardwood court with high-performance grading.</p>
+                        <div class="price-pill">₱1,000 / Hour</div>
+                    </div>
+                </div>
+                <div class="select-card" onclick="selectSportStep('Half Basketball')">
+                    <div class="image"
+                        style="background-image: url('https://images.unsplash.com/photo-1518063319789-7217e6706b04?q=80&w=1000&auto=format&fit=crop');">
+                    </div>
+                    <div class="content">
+                        <h3>Half Basketball</h3>
+                        <p>Perfect for 3v3 scrimmages, shooting drills, and tactical training.</p>
+                        <div class="price-pill">₱500 / Hour</div>
+                    </div>
+                </div>
+                <div class="select-card" onclick="selectSportStep('Pickleball')">
+                    <div class="image"
+                        style="background-image: url('https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?q=80&w=1000&auto=format&fit=crop');">
+                    </div>
+                    <div class="content">
+                        <h3>Pickleball Court</h3>
+                        <p>Standard professional dimensions with premium non-slip surface.</p>
+                        <div class="price-pill">₱300 / Hour</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- STEP 2: COURT SELECTION -->
+    <div id="court-select-view" class="view-section" style="display: none;">
+        <header class="header">
+            <div class="container">
+                <h1 class="logo">BOOST <span>BASKETBALL</span></h1>
+                <button class="btn btn-outline" onclick="showView('sport-select-view')">← Selection</button>
+            </div>
+        </header>
+
+        <main class="container fade-in">
+            <div class="page-header">
+                <div class="progress-bar">
+                    <div class="step-dot active"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+                <h2>Specific Court Location</h2>
+                <p>Pick an available court for <b id="selected-sport-label" style="color: var(--primary);">...</b></p>
+            </div>
+
+            <div id="court-options-grid" class="grid-cards">
+                <!-- Dynamically Populated -->
+            </div>
+        </main>
+    </div>
+
+    <!-- STEP 3: DATE & TIME -->
+    <div id="dateTime-view" class="view-section" style="display: none;">
+        <header class="header">
+            <div class="container">
+                <h1 class="logo">BOOST <span>BASKETBALL</span></h1>
+                <button class="btn btn-outline" onclick="goBackFromDateTime()">← Change Court</button>
+            </div>
+        </header>
+
+        <main class="container fade-in">
+            <div class="page-header">
+                <div class="progress-bar">
+                    <div class="step-dot active"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                </div>
+                <h2>Select Date & Duration</h2>
+                <p>Location: <span id="active-court-name" style="font-weight: 700; color: var(--secondary);">...</span>
+                </p>
+            </div>
+
+            <div class="booking-split">
+                <!-- LEFT: CALENDAR -->
+                <div class="calendar-wrapper shadow-md">
+                    <div class="cal-nav">
+                        <h3 id="flow-cal-month" style="font-size: 1.25rem;">Month Year</h3>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-outline shadow-sm" style="padding: 8px 16px;"
+                                onclick="changeMonth(-1, false, true)">‹</button>
+                            <button class="btn btn-outline shadow-sm" style="padding: 8px 16px;"
+                                onclick="changeMonth(1, false, true)">›</button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="flow-calendar"></div>
+                    <div
+                        style="margin-top: 2rem; display: flex; gap: 1.5rem; font-size: 0.85rem; padding-top: 1.5rem; border-top: 1px solid #f1f5f9;">
+                        <span style="display:flex; align-items:center; gap:8px;">
+                            <div class="cal-day today"
+                                style="width:20px; height:20px; border-radius:4px; font-size:0; border:1px solid var(--primary);">
+                            </div> Today
+                        </span>
+                        <span style="display:flex; align-items:center; gap:8px;">
+                            <div class="slot-dot" style="position:relative; bottom:0;"></div> Booked
+                        </span>
+                    </div>
+                </div>
+
+                <!-- RIGHT: TIME SLOTS -->
+                <div class="glass-card" style="padding: 2rem;">
+                    <h4 id="flow-date-label" style="margin-bottom: 2rem; color: var(--secondary);">1. Choose Date First
+                    </h4>
+
+                    <div class="time-grid" id="flow-slots">
+                        <!-- Slots Populated -->
+                    </div>
+
+                    <div id="duration-config"
+                        style="display: none; margin-top: 3rem; padding-top: 2.5rem; border-top: 2px dashed #e2e8f0;">
+                        <div class="form-group">
+                            <label style="font-size: 1.1rem; margin-bottom: 1rem;">2. Duration (Hours)</label>
+                            <input type="number" id="flow-duration-input" class="form-input" value="1" min="1" max="16"
+                                style="height: 60px; font-size: 1.5rem; font-weight: 700; text-align: center;"
+                                oninput="handleDurationInput()">
+                            <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 10px;">Manually enter
+                                total hours (e.g., 2, 3, or 4)</p>
+                        </div>
+
+                        <div id="booking-summary"
+                            style="display: none; background: #FFF7ED; padding: 2rem; border-radius: var(--radius-md); border: 1px solid #FFEDD5; margin-top: 2rem;">
+                            <div
+                                style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,102,0,0.1); padding-bottom: 0.75rem;">
+                                <span style="opacity: 0.7;">Time Range:</span>
+                                <b id="summary-time" style="color: var(--secondary);">...</b>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                                <span style="font-weight: 700; font-size: 1.1rem;">Grand Total:</span>
+                                <b id="summary-total" style="font-size: 2rem; color: var(--primary);">₱0</b>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary btn-block" style="margin-top: 2.5rem;"
+                            onclick="showView('policy-view')">Proceed to Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- STEP 4: POLICY REVIEW -->
+    <div id="policy-view" class="view-section" style="display: none;">
+        <header class="header">
+            <div class="container">
+                <h1 class="logo">BOOST <span>BASKETBALL</span></h1>
+                <button class="btn btn-outline" onclick="showView('dateTime-view')">← Adjust Schedule</button>
+            </div>
+        </header>
+
+        <main class="container fade-in" style="padding-top: 4rem;">
+            <div class="policy-banner shadow-lg" style="max-width: 900px; margin: 0 auto;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Facility Policy & Reminders</h2>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+                    <div>
+                        <h4
+                            style="color: var(--primary); margin-bottom: 1.5rem; border-bottom: 3px solid var(--primary); display: inline-block;">
+                            Cancellation Fees</h4>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="margin-bottom: 1rem; font-size: 1.1rem;"><b>Whole Court:</b> <span
+                                    style="color: var(--error);">₱300</span></li>
+                            <li style="margin-bottom: 1rem; font-size: 1.1rem;"><b>Half Court:</b> <span
+                                    style="color: var(--error);">₱200</span></li>
+                            <li style="margin-bottom: 1rem; font-size: 1.1rem;"><b>Pickleball:</b> <span
+                                    style="color: var(--error);">₱100</span></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4
+                            style="color: var(--secondary); margin-bottom: 1.5rem; border-bottom: 3px solid var(--secondary); display: inline-block;">
+                            Customer Support</h4>
+                        <p style="margin-bottom: 1.5rem; opacity: 0.8;">Need to reschedule or have questions? Our team
+                            is available daily.</p>
+                        <p style="font-weight: 700; font-size: 1.25rem; color: var(--secondary);">📞 0912 345 6789</p>
+                        <p style="font-weight: 600; opacity: 0.7;">📧 boostbasketball@gmail.com</p>
+                    </div>
+                </div>
+
+                <div
+                    style="margin-top: 4rem; text-align: center; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 3rem;">
+                    <button class="btn btn-primary" style="width: 100%; max-width: 500px; padding: 1.5rem;"
+                        onclick="goToDetailsStep()">I Accept & Agree to Policies</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- STEP 5: CONTACT DETAILS -->
+    <div id="details-view" class="view-section" style="display: none;">
+        <header class="header">
+            <div class="container">
+                <h1 class="logo">BOOST <span>BASKETBALL</span></h1>
+                <button class="btn btn-outline" onclick="showView('policy-view')">← Back</button>
+            </div>
+        </header>
+
+        <main class="container fade-in" style="padding-top: 5rem;">
+            <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+                <h2 style="margin-bottom: 1rem;">Customer Details</h2>
+                <p style="margin-bottom: 3rem; opacity: 0.7;">These details will be used for your official reservation
+                    and entry pass.</p>
+
+                <form id="final-booking-form">
+                    <div class="form-group">
+                        <label>Full Legal Name</label>
+                        <input type="text" id="cust-name" class="form-input" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Primary Contact Number</label>
+                        <input type="tel" id="cust-contact" class="form-input" required placeholder="09XX XXX XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address (For Receipt)</label>
+                        <input type="email" id="cust-email" class="form-input" required placeholder="john@example.com">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 2rem;">Review & Secure
+                        Slot</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- STEP 6: FINAL REVIEW & PAYMENT -->
+    <div id="payment-view" class="view-section" style="display: none;">
+        <header class="header">
+            <div class="container">
+                <h1 class="logo">BOOST <span>BASKETBALL</span></h1>
+                <button class="btn btn-outline" onclick="showView('details-view')">← Adjust Info</button>
+            </div>
+        </header>
+
+        <main class="container fade-in" style="padding: 4rem 1.5rem;">
+            <div class="checkout-summary shadow-xl">
+                <div class="checkout-details">
+                    <h3>Review Your Booking</h3>
+                    <ul>
+                        <li><b>Location:</b> <span id="summary-court-final">...</span></li>
+                        <li><b>Date:</b> <span id="summary-date-final">...</span></li>
+                        <li><b>Status:</b> <span style="color: var(--success);">Pre-Reserved</span></li>
+                    </ul>
+                </div>
+                <div class="total-display">
+                    <span class="label">FINAL AMOUNT DUE</span>
+                    <span class="amount" id="payment-amt-text">₱0</span>
+                    <p style="font-size: 0.8rem; margin-top: 5px; opacity: 0.6;">Total calculated for all selected
+                        hours.</p>
+                </div>
+            </div>
+
+            <div class="grid-cards" style="margin-bottom: 4rem;">
+                <!-- Payment Method 1 -->
+                <div class="method-card" id="pay-full" onclick="selectPayment('GCash Full', this)">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">📱</div>
+                    <h4>GCash (Full)</h4>
+                    <p>Pay 100% of the total amount now</p>
+                    <div style="margin-top: 1rem; color: var(--primary); font-weight: 700;">Fastest Entry</div>
+                </div>
+                <!-- Payment Method 2 -->
+                <div class="method-card" id="pay-down" onclick="selectPayment('Downpayment', this)">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">💸</div>
+                    <h4>Downpayment</h4>
+                    <p>Pay 50% now to reserve, rest at the counter</p>
+                    <div style="margin-top: 1rem; color: var(--secondary); font-weight: 700;">Pay Later Option</div>
+                </div>
+            </div>
+
+            <!-- PAYMENT ACTION ZONE - FULL WIDTH -->
+            <div id="payment-details-area" style="display: none;" class="fade-in">
+                <div class="glass-card"
+                    style="border: 2px solid var(--primary); background: #FFFBF9; text-align: center;">
+                    <h2 style="margin-bottom: 1.5rem;">Secure Payment via GCash</h2>
+                    <p style="font-size: 1.25rem; margin-bottom: 1rem;">Send exactly <b style="color: var(--primary);"
+                            id="active-pay-label">₱0</b> to:</p>
+                    <div
+                        style="background: white; border: 1px solid #ddd; display: inline-block; padding: 1rem 3rem; border-radius: var(--radius-sm); font-size: 2rem; font-weight: 800; color: var(--secondary); margin-bottom: 2rem;">
+                        0912 345 6789</div>
+
+                    <div class="form-group" style="max-width: 500px; margin: 2rem auto; text-align: left;">
+                        <label style="font-size: 1.1rem;">Upload Screenshot of Success Page</label>
+                        <input type="file" id="receipt-upload" class="form-input" accept="image/*"
+                            style="padding: 1.5rem;">
+                        <p style="font-size: 0.875rem; color: var(--error); margin-top: 1rem; font-weight: 600;">*
+                            Required to finalize and confirm your slot.</p>
+                    </div>
+
+                    <button class="btn btn-primary btn-block"
+                        style="padding: 2rem; font-size: 1.5rem; max-width: 700px; margin-top: 2rem;"
+                        onclick="finalizeBooking()">Confirm & Finalize Booking</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="admin-view" class="view-section" style="display: none;">
+        <header class="header">
+            <div class="container">
+                <h1 class="logo">BOOST <span>ADMIN</span></h1>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <nav id="admin-nav"
+                        style="display: flex; gap: 8px; background: #f1f5f9; padding: 6px; border-radius: 12px; margin-right: 1.5rem;">
+                        <button class="btn btn-outline admin-tab active"
+                            style="padding: 0.5rem 1.25rem; font-size: 0.875rem;"
+                            onclick="switchAdminTab('dashboard', this)">Dashboard</button>
+                        <button class="btn btn-outline admin-tab" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;"
+                            onclick="switchAdminTab('schedule', this)">Weekly Schedule</button>
+                        <button class="btn btn-outline admin-tab" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;"
+                            onclick="switchAdminTab('reservations', this)">Reservations</button>
+                    </nav>
+                    <button class="btn btn-outline shadow-sm" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container fade-in" style="padding: 3rem 1.5rem;">
+            <!-- TAB 1: DASHBOARD -->
+            <div id="admin-tab-dashboard" class="admin-tab-content">
+                <div class="grid-cards" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 3rem;">
+                    <div class="glass-card" style="text-align: center;">
+                        <span style="font-size: 3rem;">🏀</span>
+                        <h4 style="margin-top: 1.5rem; opacity: 0.6;">Today's Games</h4>
+                        <b id="stat-today-count" style="font-size: 3.5rem; color: var(--primary);">0</b>
+                    </div>
+                    <div class="glass-card" style="text-align: center;">
+                        <span style="font-size: 3rem;">👥</span>
+                        <h4 style="margin-top: 1.5rem; opacity: 0.6;">Total Customers</h4>
+                        <b id="stat-total-cust" style="font-size: 3.5rem; color: var(--secondary);">0</b>
+                    </div>
+                    <div class="glass-card" style="text-align: center;">
+                        <span style="font-size: 3rem;">📊</span>
+                        <h4 style="margin-top: 1.5rem; opacity: 0.6;">Facility Utilization</h4>
+                        <b id="stat-active-courts" style="font-size: 3.5rem; color: var(--success);">0/7</b>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="background: var(--secondary); color: white; margin-bottom: 3rem;">
+                    <h3 style="color: white; margin-bottom: 1rem;">Facility Health</h3>
+                    <p style="opacity: 0.7;">System heartbeat is normal. All courts are operational.</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div class="glass-card">
+                        <h3 style="margin-bottom: 1.5rem;">Court Usage Distribution</h3>
+                        <div style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="usageDonutChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3 style="margin-bottom: 1.5rem;">Peak Booking Hours</h3>
+                        <div style="height: 300px;">
+                            <canvas id="peakHoursBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: WEEKLY SCHEDULE -->
+            <div id="admin-tab-schedule" class="admin-tab-content" style="display: none;">
+                <div class="glass-card" style="padding: 1.5rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2>Weekly Operations</h2>
+                            <p style="opacity: 0.6;">Visual schedule for all facility operations.</p>
+                        </div>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <div
+                                style="display: flex; background: #f1f5f9; padding: 4px; border-radius: 8px; gap: 4px; align-items: center;">
+                                <button class="btn btn-outline"
+                                    style="padding: 0.5rem 0.75rem; border: none; background: transparent;"
+                                    onclick="navigateAdminWeek(-1)">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="m15 18-6-6 6-6" />
+                                    </svg>
+                                </button>
+                                <button class="btn btn-outline"
+                                    style="padding: 0.5rem 1rem; border: none; background: white; font-weight: 600; font-size: 0.875rem;"
+                                    onclick="navigateAdminWeek(0)">Today</button>
+                                <button class="btn btn-outline"
+                                    style="padding: 0.5rem 0.75rem; border: none; background: transparent;"
+                                    onclick="navigateAdminWeek(1)">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="m9 18 6-6-6-6" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label
+                                    style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Court
+                                    Filter</label>
+                                <select id="admin-cal-filter" class="form-input"
+                                    style="padding: 0.5rem; font-size: 0.875rem;" onchange="renderWeeklyCalendar()">
+                                    <option value="All">All Courts</option>
+                                    <optgroup label="Whole Basketball">
+                                        <option value="Whole Basketball Court">Whole Basketball Court</option>
+                                    </optgroup>
+                                    <optgroup label="Half Basketball">
+                                        <option value="Half Court 1">Half Court 1</option>
+                                        <option value="Half Court 2">Half Court 2</option>
+                                        <option value="Half Court 3">Half Court 3</option>
+                                    </optgroup>
+                                    <optgroup label="Pickleball">
+                                        <option value="Court 1">Court 1</option>
+                                        <option value="Court 2">Court 2</option>
+                                        <option value="Court 3">Court 3</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <button class="btn btn-outline" style="height: fit-content; margin-top: 1.25rem;"
+                                onclick="loadAdminData()">↻ Refresh</button>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Grid Container -->
+                    <div class="calendar-container">
+                        <div class="calendar-header-wrapper">
+                            <div class="time-column-header"></div>
+                            <div id="calendar-days-header" class="days-header">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                        <div class="calendar-body-scroll">
+                            <div class="calendar-grid-wrapper">
+                                <div class="time-column" id="calendar-time-column">
+                                    <!-- Populated by JS -->
+                                </div>
+                                <div class="grid-content" id="calendar-grid-content">
+                                    <div class="grid-lines-bg" id="calendar-grid-lines">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                    <div id="calendar-events-layer" class="events-layer">
+                                        <!-- Events Populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: RESERVATIONS -->
+            <div id="admin-tab-reservations" class="admin-tab-content" style="display: none;">
+                <div class="booking-split">
+                    <div class="glass-card">
+                        <h2>Internal Reservation</h2>
+                        <p style="margin-bottom: 2.5rem; opacity: 0.6;">Create facility entries for maintenance, events,
+                            or walk-ins.</p>
+
+                        <form id="admin-manual-form">
+                            <div class="form-group">
+                                <label>Reference / Customer Name</label>
+                                <input type="text" id="admin-man-name" class="form-input" required
+                                    placeholder="e.g. Court Maintenance / John Smith">
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                                <div class="form-group">
+                                    <label>Facility Category</label>
+                                    <select id="admin-man-sport" class="form-input" onchange="updateAdminManCourts()">
+                                        <option value="Whole Basketball">Whole Basketball</option>
+                                        <option value="Half Basketball">Half Basketball</option>
+                                        <option value="Pickleball">Pickleball</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Specific Court</label>
+                                    <select id="admin-man-court" class="form-input"></select>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                                <div class="form-group">
+                                    <label>Date</label>
+                                    <input type="date" id="admin-man-date" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Time Window</label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <input type="time" id="admin-man-start" class="form-input" required>
+                                        <input type="time" id="admin-man-end" class="form-input" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Entry Classification</label>
+                                <select id="admin-man-status" class="form-input">
+                                    <option value="Confirmed">Manual Booking (Confirmed)</option>
+                                    <option value="Blocked">Maintenance Block (Unavailable)</option>
+                                    <option value="Paid (Full)">Paid in Full (POS)</option>
+                                    <option value="Paid (Downpayment)">Partial Payment (POS)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">Add to
+                                Facility Schedule</button>
+                        </form>
+                    </div>
+
+                    <div class="glass-card" style="background: #F8FAFC; border: 2px dashed #CBD5E1;">
+                        <h4 style="margin-bottom: 1.5rem;">Quick Statistics</h4>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Future Bookings</span>
+                                <b id="stat-future-count">0</b>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Maintenance Blocks</span>
+                                <b id="stat-blocked-count">0</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </main>
+    </div>
+
+    <!-- Manual Entry Modal -->
+    <div id="manual-booking-modal"
+        style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.95); align-items: center; justify-content: center; z-index: 1000; padding: 2rem;">
+        <div class="glass-card fade-in" style="width: 100%; max-width: 600px; position: relative;">
+            <button class="btn btn-outline"
+                style="position: absolute; top: 1.5rem; right: 1.5rem; padding: 0.5rem 1rem;"
+                onclick="closeModal('manual-booking-modal')">&times; Close</button>
+            <h2 style="margin-bottom: 2rem;">Internal Reservation</h2>
+
+            <form id="manual-booking-form">
+                <div class="form-group">
+                    <label>Reference Name</label>
+                    <input type="text" id="man-name" class="form-input" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label>Sport</label>
+                        <select id="man-sport" class="form-input" onchange="updateManCourts()">
+                            <option value="Whole Basketball">Whole Basketball</option>
+                            <option value="Half Basketball">Half Basketball</option>
+                            <option value="Pickleball">Pickleball</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Court</label>
+                        <select id="man-court" class="form-input"></select>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="man-date" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Duration (Manual Times)</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="time" id="man-start" class="form-input" required>
+                            <input type="time" id="man-end" class="form-input" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Reservation Logic</label>
+                    <select id="man-status" class="form-input">
+                        <option value="Confirmed">Manual Booking (Confirmed)</option>
+                        <option value="Blocked">Block Slot (Maintenance)</option>
+                        <option value="Paid (Full)">Mark as Fully Paid</option>
+                        <option value="Paid (Downpayment)">Mark as Downpayment Paid</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">Execute
+                    Reservation</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
